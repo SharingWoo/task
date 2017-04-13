@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * FileName: SocketClient.java
@@ -15,6 +17,7 @@ import java.net.Socket;
  * @Date 2017/4/13
  */
 public class SocketClient implements Runnable{
+    List<SocketClient> clients = new ArrayList<>(512);
     //socket
     private Socket socket ;
     //数据输入流
@@ -23,7 +26,8 @@ public class SocketClient implements Runnable{
     private ObjectOutputStream objectOutputStream;
     //连接标志位
     private boolean isConnected;
-    public SocketClient (Socket socket) {
+
+    public SocketClient(Socket socket) {
         this.socket = socket;
         try {
             //读取service返回的数据
@@ -45,9 +49,16 @@ public class SocketClient implements Runnable{
         if(!(t instanceof Serializable)) {
             throw new Exception("not support serialized!");
         }
+        try {
+            objectOutputStream.writeObject(t);
+        } catch (IOException e) {
+            clients.remove(this);
+        }
     }
     @Override
     public void run() {
+        while(isConnected) {
 
+        }
     }
 }
